@@ -1,5 +1,5 @@
 ---Task1
-
+CREATE DATABASE hexaware
 use hexaware
 
 CREATE TABLE Users (
