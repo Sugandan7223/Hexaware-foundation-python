@@ -12,19 +12,6 @@ CREATE TABLE Users (
 );
 
 
-CREATE TABLE Couriers (
-    CourierID INT PRIMARY KEY,
-    SenderName VARCHAR(255),
-    SenderAddress TEXT,
-    ReceiverName VARCHAR(255),
-    ReceiverAddress TEXT,
-    Weight DECIMAL(5, 2),
-    Status VARCHAR(50),
-    TrackingNumber VARCHAR(20) UNIQUE,
-    DeliveryDate DATE
-);
-
-
 CREATE TABLE CourierServices (
     ServiceID INT PRIMARY KEY,
     ServiceName VARCHAR(100),
@@ -48,6 +35,25 @@ CREATE TABLE Locations (
     Address TEXT
 );
 
+CREATE TABLE Couriers (
+    CourierID INT PRIMARY KEY,
+    SenderName VARCHAR(255),
+    SenderAddress TEXT,
+    ReceiverName VARCHAR(255),
+    ReceiverAddress TEXT,
+    Weight DECIMAL(5, 2),
+    Status VARCHAR(50),
+    TrackingNumber VARCHAR(20) UNIQUE,
+    DeliveryDate DATE
+	LocationID INT,
+	EmployeeID INT,
+	ServiceID INT,
+	CONSTRAINT FK_Couriers_Location FOREIGN KEY (LocationID) REFERENCES Locations(LocationID),
+	CONSTRAINT FK_Couriers_Employee FOREIGN KEY (EmployeeID) REFERENCES Employees(EmployeeID),
+	CONSTRAINT FK_Couriers_Service FOREIGN KEY (ServiceID) REFERENCES CourierServices(ServiceID)
+);
+
+
 
 CREATE TABLE Payments (
     PaymentID INT PRIMARY KEY,
@@ -55,8 +61,11 @@ CREATE TABLE Payments (
     LocationID INT,
     Amount DECIMAL(10, 2),
     PaymentDate DATE,
+	EmployeeID INT,
     FOREIGN KEY (CourierID) REFERENCES Couriers(CourierID),
-    FOREIGN KEY (LocationID) REFERENCES Locations(LocationID)
+    FOREIGN KEY (LocationID) REFERENCES Locations(LocationID),
+	FOREIGN KEY (EmployeeID) REFERENCES Employees(EmployeeID),
+	
 );
 
 
@@ -77,9 +86,11 @@ CREATE TABLE Parcels (
     Status VARCHAR(50),
     TrackingNumber VARCHAR(20) UNIQUE,
     DeliveryDate DATE,
+	EmployeeID INT,
     CONSTRAINT FK_Parcels_Orders FOREIGN KEY (OrderID) REFERENCES Orders(OrderID),
     CONSTRAINT FK_Parcels_Couriers FOREIGN KEY (CourierID) REFERENCES Couriers(CourierID),
-    CONSTRAINT FK_Parcels_Services FOREIGN KEY (ServiceID) REFERENCES CourierServices(ServiceID)
+    CONSTRAINT FK_Parcels_Services FOREIGN KEY (ServiceID) REFERENCES CourierServices(ServiceID),
+	CONSTRAINT FK_Parcels_Employee FOREIGN KEY (EmployeeID) REFERENCES Employees(EmployeeID)
 );
 
 
@@ -90,10 +101,10 @@ VALUES(1, 'Rajesh Kumar', 'rajesh.kumar@email.com', 'password123', '9876543210',
 (3, 'Amit Patel', 'amit.patel@email.com', 'password789', '7654321098', '56 Krishna Lane, Hyderabad'),
 (4, 'Ananya Singh', 'ananya.singh@email.com', 'passwordabc', '6543210987', '78 Vindhya Nagar, Coimbatore');
 
-INSERT INTO Couriers (CourierID, SenderName, SenderAddress, ReceiverName, ReceiverAddress, Weight, Status, TrackingNumber, DeliveryDate)
-VALUES(1, 'Sender1', 'SenderAddress1', 'Receiver1', 'ReceiverAddress1', 2.5, 'In Transit', 'TN123456', '2024-03-01'),
-(2, 'Sender2', 'SenderAddress2', 'Receiver2', 'ReceiverAddress2', 1.8, 'Delivered', 'TN789012', '2024-03-02'),
-(3, 'Sender3', 'SenderAddress3', 'Receiver3', 'ReceiverAddress3', 3.0, 'In Transit', 'TN345678', '2024-03-03');
+INSERT INTO Couriers (CourierID, SenderName, SenderAddress, ReceiverName, ReceiverAddress, Weight, Status, TrackingNumber, DeliveryDate, LocationID,EmployeeID,ServiceID)
+VALUES(1, 'Sender1', 'SenderAddress1', 'Receiver1', 'ReceiverAddress1', 2.5, 'In Transit', 'TN123456', '2024-03-01',1,2,1),
+(2, 'Sender2', 'SenderAddress2', 'Receiver2', 'ReceiverAddress2', 1.8, 'Delivered', 'TN789012', '2024-03-02',1,2,2),
+(3, 'Sender3', 'SenderAddress3', 'Receiver3', 'ReceiverAddress3', 3.0, 'In Transit', 'TN345678', '2024-03-03',2,3,2);
 
 INSERT INTO CourierServices (ServiceID, ServiceName, Cost)
 VALUES(1, 'Standard', 10.00),
@@ -115,11 +126,10 @@ VALUES(1, 'Warehouse1', '789 Storage St, Chennai'),
 (3, 'Warehouse3', '123 Distribution Rd, Hyderabad');
 
 
-INSERT INTO Payments (PaymentID, CourierID, LocationID, Amount, PaymentDate)
-VALUES(1, 1, 1, 10.00, '2024-03-03'),
-(2, 2, 2, 15.00, '2024-03-04'),
-(3, 3, 3, 12.50, '2024-03-05'),
-(4, 3, 3, 50.50, '2024-03-05');
+INSERT INTO Payments (PaymentID, CourierID, LocationID, Amount, PaymentDate,EmployeeID)
+VALUES(1, 1, 1, 10.00, '2024-03-03',2),
+(2, 2, 2, 15.00, '2024-03-04',2),
+(3, 3, 3, 12.50, '2024-03-05',3);
 
 
 
@@ -129,22 +139,12 @@ VALUES(1, 1, '2024-03-01'),
 (3, 3, '2024-03-03');
 
 
-INSERT INTO Parcels (ParcelID, OrderID, CourierID, ServiceID, Weight, Status, TrackingNumber, DeliveryDate)
-VALUES(1, 1, 1, 1, 2.5, 'In Transit', 'TN123456', '2024-03-01'),
-(2, 2, 2, 2, 1.8, 'Delivered', 'TN789012', '2024-03-02'),
-(3, 3, 3, 1, 3.0, 'In Transit', 'TN345678', '2024-03-03');
-
-ALTER TABLE Parcels ADD EmployeeID int default 1;
-
-ALTER TABLE Couriers ADD EmployeeID int default 1;
+INSERT INTO Parcels (ParcelID, OrderID, CourierID, ServiceID, Weight, Status, TrackingNumber, DeliveryDate,EmployeeID)
+VALUES(1, 1, 1, 1, 2.5, 'In Transit', 'TN123456', '2024-03-01',2),
+(2, 2, 2, 2, 1.8, 'Delivered', 'TN789012', '2024-03-02',2),
+(3, 3, 3, 1, 3.0, 'In Transit', 'TN345678', '2024-03-03',3);
 
 
-ALTER TABLE Couriers ADD LocationID int default 1;
-
-ALTER TABLE Couriers ADD ServiceID int default 1;
-
-
-ALTER TABLE Payments ADD EmployeeID int default 1;
 
 
 ---Task2
@@ -206,248 +206,150 @@ SELECT * FROM Payments WHERE Amount > 50.00;
 ---Task 3
 
 -- 14
-SELECT e.EmployeeID, e.Name, COUNT(p.CourierID) AS TotalCouriersHandled
-FROM Employees e
-LEFT JOIN Couriers p ON e.EmployeeID = p.EmployeeID 
-GROUP BY e.EmployeeID, e.Name;
-
-select* from Couriers
+SELECT e.EmployeeID, e.Name, COUNT(p.CourierID) AS TotalCouriersHandled FROM Employees e
+LEFT JOIN Couriers p ON e.EmployeeID = p.EmployeeID GROUP BY e.EmployeeID, e.Name;
 
 -- 15
-SELECT l.LocationID, l.LocationName, SUM(py.Amount) AS TotalRevenue
-FROM Locations l
-LEFT JOIN Payments py ON l.LocationID = py.LocationID
-GROUP BY l.LocationID, l.LocationName;
-
+SELECT l.LocationID, l.LocationName, SUM(py.Amount) AS TotalRevenue FROM Locations l
+LEFT JOIN Payments py ON l.LocationID = py.LocationID GROUP BY l.LocationID, l.LocationName;
+ 
 -- 16
 SELECT l.LocationID, l.LocationName, COUNT(p.CourierID) AS TotalCouriersDelivered
-FROM Locations l
-LEFT JOIN Couriers p ON l.LocationID = p.LocationID
-WHERE p.Status = 'Delivered'
-GROUP BY l.LocationID, l.LocationName;
+FROM Locations l LEFT JOIN Couriers p ON l.LocationID = p.LocationID
+WHERE p.Status = 'Delivered' GROUP BY l.LocationID, l.LocationName;
 
 -- 17
-SELECT TOP 1 CourierID, AVG(DATEDIFF(DAY, p.DeliveryDate, o.OrderDate)) AS AvgDeliveryTime
-FROM Parcels p, Orders o 
-WHERE Status = 'Delivered'  AND p.OrderID = o.OrderID
-GROUP BY CourierID
-ORDER BY AvgDeliveryTime DESC;
+SELECT TOP 1 CourierID, AVG(DATEDIFF(DAY, p.DeliveryDate, o.OrderDate)) AS AvgDeliveryTime FROM Parcels p, Orders o 
+WHERE Status = 'Delivered'  AND p.OrderID = o.OrderID GROUP BY CourierID ORDER BY AvgDeliveryTime DESC;
 
 -- 18
-SELECT LocationID, LocationName
-FROM Locations
-WHERE LocationID IN (
-    SELECT LocationID
-    FROM Payments
-    GROUP BY LocationID
-    HAVING SUM(Amount) < 5000
-);
+SELECT LocationID, LocationName FROM Locations WHERE LocationID
+IN (SELECT LocationID FROM Payments GROUP BY LocationID HAVING SUM(Amount) < 5000);
 
 -- 19 
-SELECT LocationID, SUM(Amount) AS TotalPayments
-FROM Payments
-GROUP BY LocationID;
+SELECT LocationID, SUM(Amount) AS TotalPayments FROM Payments GROUP BY LocationID;
 
 -- 20
 SELECT p.CourierID, c.SenderName, c.ReceiverName, p.LocationID, SUM(p.Amount) AS TotalPayments
-FROM Payments p
-JOIN Couriers c ON p.CourierID = c.CourierID
-WHERE p.LocationID = 1 
-GROUP BY p.CourierID, c.SenderName, c.ReceiverName, p.LocationID
-HAVING SUM(p.Amount) > 1000;
+FROM Payments p JOIN Couriers c ON p.CourierID = c.CourierID WHERE p.LocationID = 1 
+GROUP BY p.CourierID, c.SenderName, c.ReceiverName, p.LocationID HAVING SUM(p.Amount) > 1000;
 
 -- 21
 SELECT p.CourierID, c.SenderName, c.ReceiverName, SUM(p.Amount) AS TotalPayments
-FROM Payments p
-JOIN Couriers c ON p.CourierID = c.CourierID
-WHERE p.PaymentDate > '2024-03-01' 
-GROUP BY p.CourierID, c.SenderName, c.ReceiverName
-HAVING SUM(p.Amount) > 1000;
+FROM Payments p JOIN Couriers c ON p.CourierID = c.CourierID WHERE p.PaymentDate > '2024-03-01' 
+GROUP BY p.CourierID, c.SenderName, c.ReceiverName HAVING SUM(p.Amount) > 1000;
 
 -- 22
-SELECT l.LocationID, l.LocationName, SUM(p.Amount) AS TotalAmountReceived
-FROM Locations l
-JOIN Payments p ON l.LocationID = p.LocationID
-WHERE p.PaymentDate > '2024-03-01' 
-GROUP BY l.LocationID, l.LocationName
-HAVING SUM(p.Amount) > 5000;
+SELECT l.LocationID, l.LocationName, SUM(p.Amount) AS TotalAmountReceived FROM Locations l 
+JOIN Payments p ON l.LocationID = p.LocationID WHERE p.PaymentDate > '2024-03-01'  
+GROUP BY l.LocationID, l.LocationName HAVING SUM(p.Amount) > 5000;
 
 ---Task 4
 
 
--- 23. Retrieve Payments with Courier Information
-SELECT p.*, c.*
-FROM Payments p
-INNER JOIN Couriers c ON p.CourierID = c.CourierID;
+--23
+SELECT p.*, c.* FROM Payments p INNER JOIN Couriers c ON p.CourierID = c.CourierID;
 
--- 24. Retrieve Payments with Location Information
-SELECT p.*, l.*
-FROM Payments p
+--24
+SELECT p.*, l.* FROM Payments p INNER JOIN Locations l ON p.LocationID = l.LocationID;
+
+--25
+SELECT p.*, c.*, l.* FROM Payments p INNER JOIN Couriers c ON p.CourierID = c.CourierID 
 INNER JOIN Locations l ON p.LocationID = l.LocationID;
 
--- 25. Retrieve Payments with Courier and Location Information
-SELECT p.*, c.*, l.*
-FROM Payments p
-INNER JOIN Couriers c ON p.CourierID = c.CourierID
-INNER JOIN Locations l ON p.LocationID = l.LocationID;
+--26
+SELECT p.*, c.* FROM Payments p INNER JOIN Couriers c ON p.CourierID = c.CourierID;
 
--- 26. List all payments with courier details
-SELECT p.*, c.*
-FROM Payments p
-INNER JOIN Couriers c ON p.CourierID = c.CourierID;
-
--- 27. Total payments received for each courier
+--27
 SELECT c.CourierID, c.SenderName, c.ReceiverName, SUM(p.Amount) AS TotalPayments
-FROM Couriers c
-LEFT JOIN Payments p ON c.CourierID = p.CourierID
-GROUP BY c.CourierID, c.SenderName, c.ReceiverName;
+FROM Couriers c LEFT JOIN Payments p ON c.CourierID = p.CourierID GROUP BY c.CourierID, c.SenderName, c.ReceiverName;
 
--- 28. List payments made on a specific date
-SELECT *
-FROM Payments
-WHERE PaymentDate = '2024-03-03'; -- Replace with the specific date
+--28
+SELECT * FROM Payments WHERE PaymentDate = '2024-03-03'; 
 
--- 29. Get Courier Information for Each Payment
-SELECT p.*, c.*
-FROM Payments p
-LEFT JOIN Couriers c ON p.CourierID = c.CourierID;
+--29
+SELECT p.*, c.* FROM Payments p LEFT JOIN Couriers c ON p.CourierID = c.CourierID;
 
--- 30. Get Payment Details with Location
-SELECT p.*, l.*
-FROM Payments p
-LEFT JOIN Locations l ON p.LocationID = l.LocationID;
+--30
+SELECT p.*, l.* FROM Payments p LEFT JOIN Locations l ON p.LocationID = l.LocationID;
 
--- 31. Calculating Total Payments for Each Courier
-SELECT c.CourierID, c.SenderName, c.ReceiverName, SUM(p.Amount) AS TotalPayments
-FROM Couriers c
-LEFT JOIN Payments p ON c.CourierID = p.CourierID
-GROUP BY c.CourierID, c.SenderName, c.ReceiverName;
+--31
+SELECT c.CourierID, c.SenderName, c.ReceiverName, SUM(p.Amount) AS TotalPayments FROM Couriers c LEFT JOIN Payments p ON c.CourierID = p.CourierID GROUP BY c.CourierID, c.SenderName, c.ReceiverName;
 
--- 32. List Payments Within a Date Range
-SELECT *
-FROM Payments
-WHERE PaymentDate BETWEEN '2024-03-01' AND '2024-03-03'; -- Replace with the specific date range
+--32
+SELECT * FROM Payments WHERE PaymentDate BETWEEN '2024-03-01' AND '2024-03-03';
 
--- Outer Joins and Combinations
--- 33. Retrieve a list of all users and their corresponding courier records, including cases where there are no matches on either side
-SELECT u.*, c.*
-FROM Users u
-FULL OUTER JOIN Couriers c ON u.name = c.SenderName;
 
--- 34. Retrieve a list of all couriers and their corresponding services, including cases where there are no matches on either side
-SELECT c.*, cs.*
-FROM Couriers c
-FULL OUTER JOIN CourierServices cs ON c.ServiceID = cs.ServiceID;
+--33
+SELECT u.*, c.* FROM Users u FULL OUTER JOIN Couriers c ON u.name = c.SenderName;
 
--- 35. Retrieve a list of all employees and their corresponding payments, including cases where there are no matches on either side
-SELECT e.*, p.*
-FROM Employees e
-FULL OUTER JOIN Payments p ON e.EmployeeID = p.EmployeeID;
+--34
+SELECT c.*, cs.* FROM Couriers c FULL OUTER JOIN CourierServices cs ON c.ServiceID = cs.ServiceID;
 
--- 36. List all users and all courier services, showing all possible combinations
-SELECT u.*, cs.*
-FROM Users u
-CROSS JOIN CourierServices cs;
+--35
+SELECT e.*, p.*FROM Employees e FULL OUTER JOIN Payments p ON e.EmployeeID = p.EmployeeID;
 
--- 37. List all employees and all locations, showing all possible combinations
-SELECT e.*, l.*
-FROM Employees e
-CROSS JOIN Locations l;
+--36
+SELECT u.*, cs.*FROM Users u CROSS JOIN CourierServices cs;
 
--- Other Joins and Operations
--- 38. Retrieve a list of couriers and their corresponding sender information (if available)
-SELECT c.*, u.*
-FROM Couriers c
-LEFT JOIN Users u ON c.SenderName = u.Name;
+--37
+SELECT e.*, l.* FROM Employees e CROSS JOIN Locations l;
 
--- 39. Retrieve a list of couriers and their corresponding receiver information (if available)
-SELECT c.*, u.*
-FROM Couriers c
-LEFT JOIN Users u ON c.ReceiverName = u.Name;
 
--- 40. Retrieve a list of couriers along with the courier service details (if available)
-SELECT c.*, cs.*
-FROM Couriers c
-LEFT JOIN CourierServices cs ON c.ServiceID = cs.ServiceID;
+--38
+SELECT c.*, u.*FROM Couriers c LEFT JOIN Users u ON c.SenderName = u.Name;
 
--- 41. Retrieve a list of employees and the number of couriers assigned to each employee
-SELECT e.EmployeeID, e.Name, COUNT(c.CourierID) AS TotalCouriersAssigned
-FROM Employees e
-LEFT JOIN Couriers c ON e.EmployeeID = c.EmployeeID
-GROUP BY e.EmployeeID, e.Name;
+--39
+SELECT c.*, u.*FROM Couriers c LEFT JOIN Users u ON c.ReceiverName = u.Name;
 
--- 42. Retrieve a list of locations and the total payment amount received at each location
+--40
+SELECT c.*, cs.*FROM Couriers c LEFT JOIN CourierServices cs ON c.ServiceID = cs.ServiceID;
+
+--41
+SELECT e.EmployeeID, e.Name, COUNT(c.CourierID) AS TotalCouriersAssigned FROM Employees e 
+LEFT JOIN Couriers c ON e.EmployeeID = c.EmployeeID GROUP BY e.EmployeeID, e.Name;
+
+--42
 SELECT l.LocationID, l.LocationName, SUM(p.Amount) AS TotalPaymentsReceived
-FROM Locations l
-LEFT JOIN Payments p ON l.LocationID = p.LocationID
-GROUP BY l.LocationID, l.LocationName;
+FROM Locations l LEFT JOIN Payments p ON l.LocationID = p.LocationID GROUP BY l.LocationID, l.LocationName;
 
--- 43. Retrieve all couriers sent by the same sender (based on SenderName)
-SELECT c1.*
-FROM Couriers c1
-JOIN Couriers c2 ON c1.SenderName = c2.SenderName
-WHERE c1.CourierID <> c2.CourierID;
+--43
+SELECT c1.*FROM Couriers c1 JOIN Couriers c2 ON c1.SenderName = c2.SenderName WHERE c1.CourierID <> c2.CourierID;
 
--- 44. List all employees who share the same role
-SELECT e1.*
-FROM Employees e1
-JOIN Employees e2 ON e1.Role = e2.Role
-WHERE e1.EmployeeID <> e2.EmployeeID;
+--44
+SELECT e1.*FROM Employees e1 JOIN Employees e2 ON e1.Role = e2.Role WHERE e1.EmployeeID <> e2.EmployeeID;
 
--- 45. Retrieve all payments made for couriers sent from the same location
-SELECT p1.*
-FROM Payments p1
-JOIN Payments p2 ON p1.LocationID = p2.LocationID
-WHERE p1.CourierID <> p2.CourierID;
+--45
+SELECT p1.*FROM Payments p1 JOIN Payments p2 ON p1.LocationID = p2.LocationID WHERE p1.CourierID <> p2.CourierID;
 
--- 46. Retrieve all couriers sent from the same location (based on SenderAddress)------------------------------------****
-SELECT c1.*
-FROM Couriers c1
-JOIN Couriers c2 ON c1.SenderAddress = c2.SenderAddress
-WHERE c1.CourierID <> c2.CourierID;
+--46
+SELECT c1.*FROM Couriers c1 JOIN Couriers c2 ON c1.SenderAddress = c2.SenderAddress WHERE c1.CourierID <> c2.CourierID;
 
--- 47. List employees and the number of couriers they have delivered
-SELECT e.EmployeeID, e.Name, COUNT(c.CourierID) AS TotalCouriersDelivered
-FROM Employees e
-LEFT JOIN Couriers c ON e.EmployeeID = c.EmployeeID
-WHERE c.Status = 'Delivered'
-GROUP BY e.EmployeeID, e.Name;
+--47
+SELECT e.EmployeeID, e.Name, COUNT(c.CourierID) AS TotalCouriersDelivered FROM Employees e
+LEFT JOIN Couriers c ON e.EmployeeID = c.EmployeeID WHERE c.Status = 'Delivered' GROUP BY e.EmployeeID, e.Name;
 
--- Subqueries and Aggregations
--- 48. Find couriers that were paid an amount greater than the cost of their respective courier services
-SELECT c.*
-FROM Couriers c
-JOIN Payments p ON c.CourierID = p.CourierID
-JOIN CourierServices cs ON c.ServiceID = cs.ServiceID
-WHERE p.Amount > cs.Cost;
 
--- 49. Find couriers that have a weight greater than the average weight of all couriers
-SELECT *
-FROM Couriers
-WHERE Weight > (SELECT AVG(Weight) FROM Couriers);
+--48
+SELECT c.*FROM Couriers c JOIN Payments p ON c.CourierID = p.CourierID
+JOIN CourierServices cs ON c.ServiceID = cs.ServiceID WHERE p.Amount > cs.Cost;
 
--- 50. Find the names of all employees who have a salary greater than the average salary
-SELECT Name
-FROM Employees
-WHERE Salary > (SELECT AVG(Salary) FROM Employees);
+--49
+SELECT * FROM Couriers WHERE Weight > (SELECT AVG(Weight) FROM Couriers);
 
--- 51. Find the total cost of all courier services where the cost is less than the maximum cost
-SELECT SUM(Cost) AS TotalCost
-FROM CourierServices
-WHERE Cost < (SELECT MAX(Cost) FROM CourierServices);
+--50
+SELECT Name FROM Employees WHERE Salary > (SELECT AVG(Salary) FROM Employees);
 
--- 52. Find all couriers that have been paid for
-SELECT c.*
-FROM Couriers c
-WHERE EXISTS (SELECT 1 FROM Payments p WHERE p.CourierID = c.CourierID);
+--51
+SELECT SUM(Cost) AS TotalCost FROM CourierServices WHERE Cost < (SELECT MAX(Cost) FROM CourierServices);
 
--- 53. Find the locations where the maximum payment amount was made
+--52
+SELECT c.*FROM Couriers c WHERE EXISTS (SELECT 1 FROM Payments p WHERE p.CourierID = c.CourierID);
+
+--53
 SELECT l.*
-FROM Locations l
-WHERE LocationID = (SELECT TOP 1 LocationID FROM Payments ORDER BY Amount DESC);
+FROM Locations l WHERE LocationID = (SELECT TOP 1 LocationID FROM Payments ORDER BY Amount DESC);
 
--- 54. Find all couriers whose weight is greater than the weight of all couriers sent by a specific sender (e.g., 'SenderName')
-SELECT c.*
-FROM Couriers c
-WHERE Weight > ALL (SELECT Weight FROM Couriers WHERE SenderName = 'Specific_Sender');
+--54
+SELECT c.*FROM Couriers c WHERE Weight > ALL (SELECT Weight FROM Couriers WHERE SenderName = 'Sender1');
 
