@@ -1,6 +1,11 @@
 ---Task1
-CREATE DATABASE hexaware;
-use hexaware
+
+
+
+create database Courier
+
+use Courier
+
 
 CREATE TABLE Users (
     UserID INT PRIMARY KEY,
@@ -44,7 +49,7 @@ CREATE TABLE Couriers (
     Weight DECIMAL(5, 2),
     Status VARCHAR(50),
     TrackingNumber VARCHAR(20) UNIQUE,
-    DeliveryDate DATE
+    DeliveryDate DATE,
 	LocationID INT,
 	EmployeeID INT,
 	ServiceID INT,
@@ -101,14 +106,11 @@ VALUES(1, 'Rajesh Kumar', 'rajesh.kumar@email.com', 'password123', '9876543210',
 (3, 'Amit Patel', 'amit.patel@email.com', 'password789', '7654321098', '56 Krishna Lane, Hyderabad'),
 (4, 'Ananya Singh', 'ananya.singh@email.com', 'passwordabc', '6543210987', '78 Vindhya Nagar, Coimbatore');
 
-INSERT INTO Couriers (CourierID, SenderName, SenderAddress, ReceiverName, ReceiverAddress, Weight, Status, TrackingNumber, DeliveryDate, LocationID,EmployeeID,ServiceID)
-VALUES(1, 'Sender1', 'SenderAddress1', 'Receiver1', 'ReceiverAddress1', 2.5, 'In Transit', 'TN123456', '2024-03-01',1,2,1),
-(2, 'Sender2', 'SenderAddress2', 'Receiver2', 'ReceiverAddress2', 1.8, 'Delivered', 'TN789012', '2024-03-02',1,2,2),
-(3, 'Sender3', 'SenderAddress3', 'Receiver3', 'ReceiverAddress3', 3.0, 'In Transit', 'TN345678', '2024-03-03',2,3,2);
-
 INSERT INTO CourierServices (ServiceID, ServiceName, Cost)
 VALUES(1, 'Standard', 10.00),
 (2, 'Express', 15.00);
+
+
 
 INSERT INTO Employees (EmployeeID, Name, Email, ContactNumber, Role, Salary)
 VALUES(1, 'Manager1', 'manager1@email.com', '1112223333', 'Manager', 50000.00),
@@ -126,17 +128,23 @@ VALUES(1, 'Warehouse1', '789 Storage St, Chennai'),
 (3, 'Warehouse3', '123 Distribution Rd, Hyderabad');
 
 
+INSERT INTO Couriers (CourierID, SenderName, SenderAddress, ReceiverName, ReceiverAddress, Weight, Status, TrackingNumber, DeliveryDate, LocationID,EmployeeID,ServiceID)
+VALUES(1, 'Rajesh Kumar', '12 Gandhi Nagar, Chennai', 'Ananya Singh', '78 Vindhya Nagar, Coimbatore', 2.5, 'In Transit', 'TN123456', '2024-03-01',1,2,1),
+(2, 'Priya Sharma', '34 Kaveri Street, Bangalore', 'Amit Patel', '56 Krishna Lane, Hyderabad', 1.8, 'Delivered', 'TN789012', '2024-03-02',1,2,2),
+(3, 'Amit Patel', '56 Krishna Lane, Hyderabad', 'Priya Sharma', '34 Kaveri Street, Bangalore', 3.0, 'In Transit', 'TN345678', '2024-03-03',2,3,2),
+(4, 'Ananya Singh', '78 Vindhya Nagar, Coimbatore', 'Rajesh Kumar', '12 Gandhi Nagar, Chennai', 4.0, 'In Transit', 'TN345679', '2024-03-05',2,3,2);
+
 INSERT INTO Payments (PaymentID, CourierID, LocationID, Amount, PaymentDate,EmployeeID)
-VALUES(1, 1, 1, 10.00, '2024-03-03',2),
-(2, 2, 2, 15.00, '2024-03-04',2),
-(3, 3, 3, 12.50, '2024-03-05',3);
+VALUES(1, 1, 1, 10000.00, '2024-03-03',2),
+(2, 2, 2, 1500.00, '2024-03-04',2),
+(3, 3, 3, 1200.50, '2024-03-05',3);
 
-
+---
 
 INSERT INTO Orders (OrderID, CustomerID, OrderDate)
-VALUES(1, 1, '2024-03-01'),
-(2, 2, '2024-03-02'),
-(3, 3, '2024-03-03');
+VALUES(1, 1, '2024-02-01'),
+(2, 2, '2024-02-02'),
+(3, 3, '2024-02-03');
 
 
 INSERT INTO Parcels (ParcelID, OrderID, CourierID, ServiceID, Weight, Status, TrackingNumber, DeliveryDate,EmployeeID)
@@ -144,6 +152,54 @@ VALUES(1, 1, 1, 1, 2.5, 'In Transit', 'TN123456', '2024-03-01',2),
 (2, 2, 2, 2, 1.8, 'Delivered', 'TN789012', '2024-03-02',2),
 (3, 3, 3, 1, 3.0, 'In Transit', 'TN345678', '2024-03-03',3);
 
+
+INSERT INTO Users (UserID, Name, Email, Password, ContactNumber, Address)
+VALUES
+(5, 'Sara Khan', 'sara.khan@email.com', 'passwordxyz', '5432109876', '90 Yamuna Road, Delhi'),
+(6, 'Michael Johnson', 'michael.johnson@email.com', 'password123', '6547893210', '23 Park Street, Mumbai'),
+(7, 'Emma Wilson', 'emma.wilson@email.com', 'password456', '7896543210', '45 Lake Avenue, Kolkata'),
+(8, 'David Lee', 'david.lee@email.com', 'password789', '9876543210', '67 Forest Lane, Pune'),
+(9, 'Sophia Garcia', 'sophia.garcia@email.com', 'passwordabc', '8765432109', '89 Ocean View, Goa');
+
+
+
+INSERT INTO Orders (OrderID, CustomerID, OrderDate)
+VALUES
+(4, 4, '2024-02-04'),
+(5, 5, '2024-02-05'),
+(6, 6, '2024-02-06'),
+(7, 7, '2024-02-07'),
+(8, 8, '2024-02-08'),
+(9, 1, '2024-02-08');
+
+INSERT INTO Couriers (CourierID, SenderName, SenderAddress, ReceiverName, ReceiverAddress, Weight, Status, TrackingNumber, DeliveryDate, LocationID, EmployeeID, ServiceID)
+VALUES
+(5, 'Sara Khan', '90 Yamuna Road, Delhi', 'David Lee', '67 Forest Lane, Pune', 2.0, 'In Transit', 'TN234567', '2024-03-04', 1, 2, 2),
+(6, 'Michael Johnson', '23 Park Street, Mumbai', 'Emma Wilson', '45 Lake Avenue, Kolkata', 1.5, 'Delivered', 'TN345688', '2024-03-05', 2, 3, 1),
+(7, 'Emma Wilson', '45 Lake Avenue, Kolkata', 'Michael Johnson', '23 Park Street, Mumbai', 3.5, 'In Transit', 'TN456789', '2024-03-06', 3, 2, 2),
+(8, 'David Lee', '67 Forest Lane, Pune', 'Sara Khan', '90 Yamuna Road, Delhi', 4.5, 'In Transit', 'TN567890', '2024-03-07', 3, 2, 1),
+(9, 'Rajesh Kumar', '12 Gandhi Nagar, Chennai', 'Sara Khan', '90 Yamuna Road, Delhi', 2.8, 'Delivered', 'TN678901', '2024-03-08', 2, 3, 2);
+
+
+INSERT INTO Payments (PaymentID, CourierID, LocationID, Amount, PaymentDate, EmployeeID)
+VALUES
+(4, 4, 1, 1500.00, '2024-03-06', 2),
+(5, 5, 2, 1000.00, '2024-03-07', 3),
+(6, 6, 3, 25000.00, '2024-03-08', 2),
+(7, 7, 1, 2000.00, '2024-03-09', 3),
+(8, 8, 2, 1200.50, '2024-03-10', 2),
+(9, 9, 2, 1200.50, '2024-03-10', 2);
+
+
+
+INSERT INTO Parcels (ParcelID, OrderID, CourierID, ServiceID, Weight, Status, TrackingNumber, DeliveryDate, EmployeeID)
+VALUES
+(4, 4, 4, 1, 4.0, 'In Transit', 'TN456789', '2024-03-04', 2),
+(5, 5, 5, 2, 2.5, 'Delivered', 'TN567890', '2024-03-05', 3),
+(6, 6, 6, 1, 3.2, 'In Transit', 'TN678901', '2024-03-06', 2),
+(7, 7, 7, 2, 2.0, 'Delivered', 'TN789013', '2024-03-07', 2),
+(8, 8, 8, 1, 3.5, 'In Transit', 'TN89012', '2024-03-08', 2),
+(9, 9, 9, 1, 3.5, 'In Transit', 'TN89014', '2024-03-08', 2);
 
 
 
@@ -175,11 +231,13 @@ SELECT * FROM Parcels WHERE Status = 'In Transit';
 
 --7
 
-SELECT * FROM Parcels WHERE CAST(DeliveryDate AS DATE) = CAST(GETDATE() AS DATE);
+SELECT * FROM Couriers WHERE DeliveryDate  = CAST(GETDATE() AS DATE);
 
 --8
 
-SELECT * FROM Parcels WHERE Status = 'Delivered';
+SELECT * FROM Couriers WHERE Status = 'Delivered';
+
+
 
 --9
 
@@ -187,8 +245,11 @@ SELECT CourierID, COUNT(*) AS TotalPackages FROM Parcels GROUP BY CourierID;
 
 --10
 
-SELECT p.CourierID, AVG(DATEDIFF(DAY, o.OrderDate, p.DeliveryDate)) AS AvgDeliveryTime
-FROM Parcels p JOIN Orders o ON p.OrderID = o.OrderID WHERE p.Status = 'Delivered' GROUP BY p.CourierID;
+
+
+SELECT CourierID,AVG(DATEDIFF(DAY, o.OrderDate, c.DeliveryDate)) AS AvgDeliveryTime
+FROM Couriers c INNER JOIN Orders o ON c.CourierID=o.OrderID AND c.Status = 'Delivered' GROUP BY c.CourierID;
+
 
 --11
 
@@ -240,7 +301,7 @@ FROM Payments p JOIN Couriers c ON p.CourierID = c.CourierID WHERE p.PaymentDate
 GROUP BY p.CourierID, c.SenderName, c.ReceiverName HAVING SUM(p.Amount) > 1000;
 
 -- 22
-SELECT l.LocationID, l.LocationName, SUM(p.Amount) AS TotalAmountReceived FROM Locations l 
+SELECT l.LocationID, l.LocationName, SUM(p.Amount) AS TotalAmountReceived FROM Locations l
 JOIN Payments p ON l.LocationID = p.LocationID WHERE p.PaymentDate > '2024-03-01'  
 GROUP BY l.LocationID, l.LocationName HAVING SUM(p.Amount) > 5000;
 
@@ -265,7 +326,7 @@ SELECT c.CourierID, c.SenderName, c.ReceiverName, SUM(p.Amount) AS TotalPayments
 FROM Couriers c LEFT JOIN Payments p ON c.CourierID = p.CourierID GROUP BY c.CourierID, c.SenderName, c.ReceiverName;
 
 --28
-SELECT * FROM Payments WHERE PaymentDate = '2024-03-03'; 
+SELECT * FROM Payments WHERE PaymentDate = '2024-03-08'; 
 
 --29
 SELECT p.*, c.* FROM Payments p LEFT JOIN Couriers c ON p.CourierID = c.CourierID;
@@ -274,10 +335,11 @@ SELECT p.*, c.* FROM Payments p LEFT JOIN Couriers c ON p.CourierID = c.CourierI
 SELECT p.*, l.* FROM Payments p LEFT JOIN Locations l ON p.LocationID = l.LocationID;
 
 --31
-SELECT c.CourierID, c.SenderName, c.ReceiverName, SUM(p.Amount) AS TotalPayments FROM Couriers c LEFT JOIN Payments p ON c.CourierID = p.CourierID GROUP BY c.CourierID, c.SenderName, c.ReceiverName;
+SELECT c.CourierID, c.SenderName, c.ReceiverName, SUM(p.Amount) AS TotalPayments FROM Couriers c
+LEFT JOIN Payments p ON c.CourierID = p.CourierID GROUP BY c.CourierID, c.SenderName, c.ReceiverName;
 
 --32
-SELECT * FROM Payments WHERE PaymentDate BETWEEN '2024-03-01' AND '2024-03-03';
+SELECT * FROM Payments WHERE PaymentDate BETWEEN '2024-02-01' AND '2024-03-08';
 
 
 --33
@@ -320,10 +382,17 @@ SELECT c1.*FROM Couriers c1 JOIN Couriers c2 ON c1.SenderName = c2.SenderName WH
 SELECT e1.*FROM Employees e1 JOIN Employees e2 ON e1.Role = e2.Role WHERE e1.EmployeeID <> e2.EmployeeID;
 
 --45
-SELECT p1.*FROM Payments p1 JOIN Payments p2 ON p1.LocationID = p2.LocationID WHERE p1.CourierID <> p2.CourierID;
+SELECT Payments.*FROM Payments JOIN Couriers ON Payments.CourierID = Couriers.CourierID WHERE Couriers.SenderAddress LIKE '12 Gandhi Nagar, Chennai';
+
 
 --46
-SELECT c1.*FROM Couriers c1 JOIN Couriers c2 ON c1.SenderAddress = c2.SenderAddress WHERE c1.CourierID <> c2.CourierID;
+
+
+SELECT *FROM Couriers WHERE  SenderAddress LIKE '12 Gandhi Nagar, Chennai';
+    
+
+
+
 
 --47
 SELECT e.EmployeeID, e.Name, COUNT(c.CourierID) AS TotalCouriersDelivered FROM Employees e
@@ -341,15 +410,14 @@ SELECT * FROM Couriers WHERE Weight > (SELECT AVG(Weight) FROM Couriers);
 SELECT Name FROM Employees WHERE Salary > (SELECT AVG(Salary) FROM Employees);
 
 --51
-SELECT SUM(Cost) AS TotalCost FROM CourierServices WHERE Cost < (SELECT MAX(Cost) FROM CourierServices);
+SELECT SUM(Amount) AS TotalCost FROM Payments WHERE Amount < (SELECT MAX(Amount) FROM Payments);
 
 --52
 SELECT c.*FROM Couriers c WHERE EXISTS (SELECT 1 FROM Payments p WHERE p.CourierID = c.CourierID);
 
 --53
-SELECT l.*
-FROM Locations l WHERE LocationID = (SELECT TOP 1 LocationID FROM Payments ORDER BY Amount DESC);
+SELECT l.*FROM Locations l WHERE LocationID = (SELECT TOP 1 LocationID FROM Payments ORDER BY Amount DESC);
 
 --54
-SELECT c.*FROM Couriers c WHERE Weight > ALL (SELECT Weight FROM Couriers WHERE SenderName = 'Sender1');
+SELECT c.*FROM Couriers c WHERE Weight > ALL (SELECT Weight FROM Couriers WHERE SenderName = 'Rajesh Kumar');
 
