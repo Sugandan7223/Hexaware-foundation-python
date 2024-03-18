@@ -41,7 +41,6 @@ def close_connection(conn):
     print("Connection closed.")
 
 
-
 class Pet:
     def __init__(self, pet_id, name, age, breed, pet_type, available_for_adoption, shelter_name, owner_id, shelter_id):
         self.pet_id = pet_id
@@ -54,14 +53,70 @@ class Pet:
         self.owner_id = owner_id
         self.shelter_id = shelter_id
 
+    def get_pet_id(self):
+        return self._pet_id
+
+    def set_pet_id(self, pet_id):
+        self._pet_id = pet_id
+
+    def get_name(self):
+        return self._name
+
+    def set_name(self, name):
+        self._name = name
+
+    def get_age(self):
+        return self._age
+
+    def set_age(self, age):
+        self._age = age
+
+    def get_breed(self):
+        return self._breed
+
+    def set_breed(self, breed):
+        self._breed = breed
+
+    def get_pet_type(self):
+        return self._pet_type
+
+    def set_pet_type(self, pet_type):
+        self._pet_type = pet_type
+
+    def is_available_for_adoption(self):
+        return self._available_for_adoption
+
+    def set_available_for_adoption(self, available_for_adoption):
+        self._available_for_adoption = available_for_adoption
+
+    def get_shelter_name(self):
+        return self._shelter_name
+
+    def set_shelter_name(self, shelter_name):
+        self._shelter_name = shelter_name
+
+    def get_owner_id(self):
+        return self._owner_id
+
+    def set_owner_id(self, owner_id):
+        self._owner_id = owner_id
+
+    def get_shelter_id(self):
+        return self._shelter_id
+
+    def set_shelter_id(self, shelter_id):
+        self._shelter_id = shelter_id
+
     def __str__(self):
         try:
             return f"{self.name}, {self.age}, {self.breed}, {self.pet_type}, {self.available_for_adoption}, {self.shelter_name}, {self.owner_id}, {self.shelter_id}"
         except AttributeError:
             raise NullReferenceException("Pet information is missing.")
-            
+
+
 class Dog(Pet):
-    def __init__(self, pet_id, name, age, breed, pet_type, available_for_adoption, shelter_name, owner_id, shelter_id, dog_breed):
+    def __init__(self, pet_id, name, age, breed, pet_type, available_for_adoption, shelter_name, owner_id, shelter_id,
+                 dog_breed):
         super().__init__(pet_id, name, age, breed, pet_type, available_for_adoption, shelter_name, owner_id, shelter_id)
         self.dog_breed = dog_breed
 
@@ -71,8 +126,10 @@ class Dog(Pet):
     def set_dog_breed(self, dog_breed):
         self.dog_breed = dog_breed
 
+
 class Cat(Pet):
-    def __init__(self, pet_id, name, age, breed, pet_type, available_for_adoption, shelter_name, owner_id, shelter_id, cat_color):
+    def __init__(self, pet_id, name, age, breed, pet_type, available_for_adoption, shelter_name, owner_id, shelter_id,
+                 cat_color):
         super().__init__(pet_id, name, age, breed, pet_type, available_for_adoption, shelter_name, owner_id, shelter_id)
         self.cat_color = cat_color
 
@@ -81,6 +138,7 @@ class Cat(Pet):
 
     def set_cat_color(self, cat_color):
         self.cat_color = cat_color
+
 
 class PetShelter:
     def __init__(self):
@@ -104,17 +162,19 @@ class PetShelter:
                     print(f"Error: {nre}")
                     continue
 
+
 class AdoptionEvent:
-    def __init__(self,event_id ,event_name,event_date,location ,city, organizer_id):
+    def __init__(self, event_id, event_name, event_date, location, city, organizer_id):
         self.event_id = event_id
         self.event_name = event_name
         self.event_date = event_date
         self.location = location
-        self.city=city
-        self.organizer_id=organizer_id
+        self.city = city
+        self.organizer_id = organizer_id
 
     def __str__(self):
         return f"Event ID: {self.event_id}, Name: {self.event_name}, Date: {self.event_date}, Location: {self.location}"
+
 
 class AdoptionEventManager:
     def __init__(self):
@@ -145,6 +205,7 @@ class Database:
         except pyodbc.Error as ex:
             print(f"Error: {ex}")
             return []
+
     def get_upcoming_events(self):
         try:
             cursor = self.conn.cursor()
@@ -155,20 +216,23 @@ class Database:
             print(f"Error: {ex}")
             return []
 
-    def register_participant(self,participant_id, participant_name, participant_email,event_id,city):
+    def register_participant(self, participant_id, participant_name, participant_email, event_id, city):
         try:
             cursor = self.conn.cursor()
-            cursor.execute("INSERT INTO Participants (ParticipantID, ParticipantName, ParticipantType,EventID,City) VALUES (?, ?, ?,?,?)",
-                           (participant_id, participant_name, participant_email,event_id,city))
+            cursor.execute(
+                "INSERT INTO Participants (ParticipantID, ParticipantName, ParticipantType,EventID,City) VALUES (?, ?, ?,?,?)",
+                (participant_id, participant_name, participant_email, event_id, city))
             self.conn.commit()
             print("Participant registered successfully.")
         except pyodbc.Error as ex:
             print(f"Error registering participant: {ex}")
             raise DatabaseOperationException("Failed to register participant.")
 
+
 class Donation(ABC):
-    def __init__(self, donation_id,donor_name, donation_type, donation_amount, donation_item, donation_date, shelter_id):
-        self.donation_id=donation_id
+    def __init__(self, donation_id, donor_name, donation_type, donation_amount, donation_item, donation_date,
+                 shelter_id):
+        self.donation_id = donation_id
         self.donor_name = donor_name
         self.donation_type = donation_type
         self.donation_amount = donation_amount
@@ -180,27 +244,34 @@ class Donation(ABC):
     def record_donation(self):
         pass
 
+
 class CashDonation(Donation):
     def record_donation(self):
         try:
             cursor = db.conn.cursor()
-            cursor.execute("INSERT INTO Donations (DonationID,DonorName, DonationType, DonationAmount, DonationItem, DonationDate, ShelterID) VALUES (?,?, ?, ?, ?, ?, ?)",
-                            (self.donation_id,self.donor_name, self.donation_type, self.donation_amount, None, self.donation_date, self.shelter_id))
+            cursor.execute(
+                "INSERT INTO Donations (DonationID,DonorName, DonationType, DonationAmount, DonationItem, DonationDate, ShelterID) VALUES (?,?, ?, ?, ?, ?, ?)",
+                (self.donation_id, self.donor_name, self.donation_type, self.donation_amount, None, self.donation_date,
+                 self.shelter_id))
             db.conn.commit()
             print(f"Cash donation of ${self.donation_amount} recorded on {self.donation_date} by {self.donor_name}")
         except pyodbc.Error as ex:
             print(f"Error recording cash donation: {ex}")
 
+
 class ItemDonation(Donation):
     def record_donation(self):
         try:
             cursor = db.conn.cursor()
-            cursor.execute("INSERT INTO Donations (DonationID,DonorName, DonationType, DonationAmount, DonationItem, DonationDate, ShelterID) VALUES (?,?, ?, ?, ?, ?, ?)",
-                            (self.donation_id,self.donor_name, self.donation_type, self.donation_amount, self.donation_item, self.donation_date, self.shelter_id))
+            cursor.execute(
+                "INSERT INTO Donations (DonationID,DonorName, DonationType, DonationAmount, DonationItem, DonationDate, ShelterID) VALUES (?,?, ?, ?, ?, ?, ?)",
+                (self.donation_id, self.donor_name, self.donation_type, self.donation_amount, self.donation_item,
+                 self.donation_date, self.shelter_id))
             db.conn.commit()
             print(f"Item donation of {self.donation_item} worth ${self.donation_amount} recorded by {self.donor_name}")
         except pyodbc.Error as ex:
             print(f"Error recording item donation: {ex}")
+
 
 def display_menu():
     print("1. List Available Pets")
@@ -235,11 +306,9 @@ if __name__ == "__main__":
 
             shelter = PetShelter()
 
-
             pets = db.get_available_pets()
             for pet in pets:
                 shelter.add_pet(Pet(*pet))
-
 
             shelter.list_available_pets()
         elif choice == "2":
@@ -259,7 +328,8 @@ if __name__ == "__main__":
                 donor_name = input("Enter donor name: ")
                 donation_amount = float(input("Enter donation amount: "))
                 donation_item = input("Enter donation item: ")
-                item_donation = ItemDonation(donation_id, donor_name, "Item", donation_amount, donation_item, donation_date, 1)
+                item_donation = ItemDonation(donation_id, donor_name, "Item", donation_amount, donation_item,
+                                             donation_date, 1)
                 item_donation.record_donation()
             except ValueError as ve:
                 print(f"Error: {ve}")
@@ -275,12 +345,12 @@ if __name__ == "__main__":
                 print(f"Database Operation Error: {doe}")
         elif choice == "5":
             try:
-                participant_id=input("Enter your ID : ")
+                participant_id = input("Enter your ID : ")
                 event_id = input("Enter event ID to register for: ")
                 participant_name = input("Enter your name: ")
                 participant_email = input("Enter your email: ")
-                city=input("Enter event City: ")
-                db.register_participant(participant_id, participant_name, participant_email,event_id,city)
+                city = input("Enter event City: ")
+                db.register_participant(participant_id, participant_name, participant_email, event_id, city)
             except DatabaseOperationException as doe:
                 print(f"Database Operation Error: {doe}")
         elif choice == "6":
@@ -296,6 +366,5 @@ if __name__ == "__main__":
             break
         else:
             print("Invalid choice. Please try again.")
-
 
     close_connection(db.conn)
