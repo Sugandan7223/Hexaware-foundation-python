@@ -45,7 +45,7 @@ def close_connection(conn):
     print("Connection closed.")
 
 
-class Pet:
+class Pet(IAdoptable):
     def __init__(self, pet_id, name, age, breed, pet_type, available_for_adoption, shelter_name, owner_id, shelter_id):
         self.pet_id = pet_id
         self.name = name
