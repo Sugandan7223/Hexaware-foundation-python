@@ -45,7 +45,7 @@ def close_connection(conn):
     print("Connection closed.")
 
 
-class Pet(IAdoptable):
+class Pet:
     def __init__(self, pet_id, name, age, breed, pet_type, available_for_adoption, shelter_name, owner_id, shelter_id):
         self.pet_id = pet_id
         self.name = name
@@ -113,7 +113,7 @@ class Pet(IAdoptable):
 
     def Adopt(self):
         try:
-           
+            # Implement adoption process
             print(f"Adoption process handled for pet {self._name}")
         except Exception as e:
             raise AdoptionException(f"Error handling adoption: {e}")
@@ -204,6 +204,62 @@ class AdoptionEventManager:
             for event in self.events:
                 print(event)
 
+class Participant:
+    def __init__(self, participant_id, participant_name, participant_email, event_id, city):
+        self.participant_id = participant_id
+        self.participant_name = participant_name
+        self.participant_email = participant_email
+        self.event_id = event_id
+        self.city = city
+
+    def __str__(self):
+        return f"Participant ID: {self.participant_id}, Name: {self.participant_name}, Email: {self.participant_email}, Event ID: {self.event_id}, City: {self.city}"
+
+
+
+
+    def add_participant(self, participant):
+        self.participants_list.append(participant)
+
+    def remove_participant(self, participant):
+        self.participants_list.remove(participant)
+
+    def list_participants(self):
+        if not self.participants_list:
+            print("No participants registered.")
+        else:
+            print("Registered Participants:")
+            for participant in self.participants_list:
+                try:
+                    print(participant)
+                except NullReferenceException as nre:
+                    print(f"Error: {nre}")
+                    continue
+class PList:
+    def __init__(self):
+        self.participants_list = []
+
+    @classmethod
+    def create_instance(cls):
+        return cls()
+
+    def add_participant(self, participant):
+        self.participants_list.append(participant)
+
+    def remove_participant(self, participant):
+        self.participants_list.remove(participant)
+
+    def list_participants(self):
+        if not self.participants_list:
+            print("No participants registered.")
+        else:
+            print("Registered Participants:")
+            for participant in self.participants_list:
+                try:
+                    print(participant)
+                except NullReferenceException as nre:
+                    print(f"Error: {nre}")
+                    continue
 
 class Database:
     def __init__(self):
@@ -240,6 +296,16 @@ class Database:
         except pyodbc.Error as ex:
             print(f"Error registering participant: {ex}")
             raise DatabaseOperationException("Failed to register participant.")
+
+    def retrieve_all_participants(self):
+        try:
+            cursor = self.conn.cursor()
+            cursor.execute("SELECT * FROM Participants")
+            pets = cursor.fetchall()
+            return pets
+        except pyodbc.Error as ex:
+                    print(f"Error: {ex}")
+                    return []
 
 
 class Donation(ABC):
@@ -293,7 +359,8 @@ def display_menu():
     print("4. List Upcoming Adoption Events")
     print("5. Register for an Adoption Event")
     print("6. Read Data from File")
-    print("7. Exit")
+    print("7. Read all Participants")
+    print("8. Exit")
 
 
 def read_data_from_file(file_path):
@@ -376,6 +443,17 @@ if __name__ == "__main__":
             except FileHandlingException as fe:
                 print(f"File Handling Error: {fe}")
         elif choice == "7":
+            participants = PList()
+
+
+            available_participants = db.retrieve_all_participants()
+
+            for participant in available_participants:
+                participants.add_participant(Participant(*participant))
+
+            participants.list_participants()
+
+        elif choice == "8":
             break
         else:
             print("Invalid choice. Please try again.")
