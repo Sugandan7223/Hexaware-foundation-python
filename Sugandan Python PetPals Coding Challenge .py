@@ -113,7 +113,7 @@ class Pet:
 
     def Adopt(self):
         try:
-            # Implement adoption process
+        
             print(f"Adoption process handled for pet {self._name}")
         except Exception as e:
             raise AdoptionException(f"Error handling adoption: {e}")
