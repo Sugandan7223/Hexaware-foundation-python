@@ -23,6 +23,10 @@ class NullReferenceException(Exception):
 class DatabaseOperationException(Exception):
     pass
 
+class IAdoptable(ABC):
+    @abstractmethod
+    def Adopt(self):
+        pass
 
 def connect_to_sql_server():
     try:
@@ -107,6 +111,13 @@ class Pet:
     def set_shelter_id(self, shelter_id):
         self._shelter_id = shelter_id
 
+    def Adopt(self):
+        try:
+            # Implement adoption process
+            print(f"Adoption process handled for pet {self._name}")
+        except Exception as e:
+            raise AdoptionException(f"Error handling adoption: {e}")
+
     def __str__(self):
         try:
             return f"{self.name}, {self.age}, {self.breed}, {self.pet_type}, {self.available_for_adoption}, {self.shelter_name}, {self.owner_id}, {self.shelter_id}"
@@ -175,6 +186,8 @@ class AdoptionEvent:
     def __str__(self):
         return f"Event ID: {self.event_id}, Name: {self.event_name}, Date: {self.event_date}, Location: {self.location}"
 
+    def HostEvent(self):
+        print("Adoption event hosted successfully.")
 
 class AdoptionEventManager:
     def __init__(self):
