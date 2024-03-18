@@ -59,6 +59,28 @@ class Pet:
             return f"{self.name}, {self.age}, {self.breed}, {self.pet_type}, {self.available_for_adoption}, {self.shelter_name}, {self.owner_id}, {self.shelter_id}"
         except AttributeError:
             raise NullReferenceException("Pet information is missing.")
+            
+class Dog(Pet):
+    def __init__(self, pet_id, name, age, breed, pet_type, available_for_adoption, shelter_name, owner_id, shelter_id, dog_breed):
+        super().__init__(pet_id, name, age, breed, pet_type, available_for_adoption, shelter_name, owner_id, shelter_id)
+        self.dog_breed = dog_breed
+
+    def get_dog_breed(self):
+        return self.dog_breed
+
+    def set_dog_breed(self, dog_breed):
+        self.dog_breed = dog_breed
+
+class Cat(Pet):
+    def __init__(self, pet_id, name, age, breed, pet_type, available_for_adoption, shelter_name, owner_id, shelter_id, cat_color):
+        super().__init__(pet_id, name, age, breed, pet_type, available_for_adoption, shelter_name, owner_id, shelter_id)
+        self.cat_color = cat_color
+
+    def get_cat_color(self):
+        return self.cat_color
+
+    def set_cat_color(self, cat_color):
+        self.cat_color = cat_color
 
 class PetShelter:
     def __init__(self):
