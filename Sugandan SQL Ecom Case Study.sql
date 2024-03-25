@@ -84,25 +84,28 @@ INSERT INTO orders VALUES
 (10, 10, '2023-10-20', 1400.00);
 
 CREATE TABLE order_items (
-    order_item_id INT PRIMARY KEY,
+    order_item_id  int IDENTITY(1,1),
     order_id INT,
     product_id INT,
     quantity INT,
     FOREIGN KEY (order_id) REFERENCES orders(order_id),
-    FOREIGN KEY (product_id) REFERENCES products(product_id)
+    FOREIGN KEY (product_id) REFERENCES products(product_id),
+	PRIMARY KEY (order_item_id) 
 );
 
+drop table order_items
+
 INSERT INTO order_items VALUES
-(1, 1, 1, 2),
-(2, 1, 3, 1),
-(3, 2, 2, 3),
-(4, 3, 5, 2),
-(5, 4, 4, 4),
-(6, 4, 6, 1),
-(7, 5, 1, 1),
-(8, 5, 2, 2),
-(9, 6, 10, 2),
-(10, 6, 9, 3);
+( 1, 1, 2),
+( 1, 3, 1),
+( 2, 2, 3),
+( 3, 5, 2),
+( 4, 4, 4),
+( 4, 6, 1),
+( 5, 1, 1),
+( 5, 2, 2),
+( 6, 10, 2),
+( 6, 9, 3);
 
 
 SELECT * FROM CUSTOMERS;
