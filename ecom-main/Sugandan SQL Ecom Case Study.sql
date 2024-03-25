@@ -93,7 +93,7 @@ CREATE TABLE order_items (
 	PRIMARY KEY (order_item_id) 
 );
 
-drop table order_items
+
 
 INSERT INTO order_items VALUES
 ( 1, 1, 2),
