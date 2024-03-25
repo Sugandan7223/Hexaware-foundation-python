@@ -151,7 +151,10 @@ class OrderProcessorRepositoryImpl(ecom.exception.OrderProcessorRepository):
             print(f"Error placing order: {ex}")
             return False
 
-    def getOrdersByCustomer(self, customerId):
+    def getOrdersByCustomer(self, customerId, customer_id=None):
+        if not self.customerExists(customer_id):
+           
+            raise ecom.exception.CustomerNotFoundException(f"Customer with ID {customer_id} not found")
         try:
             cursor = self.conn.cursor()
             cursor.execute("SELECT products.*, order_items.quantity FROM products JOIN order_items ON products.product_id = order_items.product_id JOIN orders ON orders.order_id = order_items.order_id WHERE orders.customer_id = ?",
@@ -161,6 +164,42 @@ class OrderProcessorRepositoryImpl(ecom.exception.OrderProcessorRepository):
             for row in rows:
                 orders.append({'product_id': row.product_id, 'name': row.name, 'description': row.description, 'price': row.price, 'stock_quantity': row.stock_quantity, 'quantity': row.quantity})
             return orders
-        except pyodbc.Error as ex:
+        except ecom.exception.CustomerNotFoundException as ex:
             print(f"Error getting orders by customer: {ex}")
             return []
+
+    def customerExists(self, customer_id):
+        try:
+            cursor = self.conn.cursor()
+           
+            cursor.execute("SELECT COUNT(*) FROM customers WHERE customer_id = ?", (customer_id,))
+            count = cursor.fetchone()[0]  # Fetch the count result
+            return count > 0  
+        except pyodbc.Error as ex:
+            print(f"Error checking if customer exists: {ex}")
+            return False  
+
+    def deleteProductByID(self,product_id):
+        if not self.ProductExists(product_id):
+            raise ecom.exception.ProductNotFoundException(f"Product with ID {product_id} not found")
+        try:
+            cursor = self.conn.cursor()
+            
+            cursor.execute("DELETE FROM products WHERE product_id = ?", (product_id,))
+            self.conn.commit()  # Commit the transaction
+            print("Product deleted successfully")
+            return True
+        except pyodbc.Error as ex:
+            print(f"Error deleting product: {ex}")
+            return False
+
+    def ProductExists(self, product_id):
+        try:
+            cursor = self.conn.cursor()
+          
+            cursor.execute("SELECT COUNT(*) FROM products WHERE product_id = ?", (product_id,))
+            count = cursor.fetchone()[0]  # Fetch the count result
+            return count > 0  
+        except pyodbc.Error as ex:
+            print(f"Error checking if customer exists: {ex}")
+            return False 
