@@ -1,13 +1,6 @@
 import pyodbc
 import ecom
 
-
-
-
-
-
-
-
 class EcomApp:
     @staticmethod
     def main():
@@ -53,6 +46,7 @@ class EcomApp:
                 order.deleteProduct(product_id)
             elif choice == "4":
                 # Add to Cart
+                order.showProducts()
                 cart_id=int(input("Enter Cart ID:"))
                 customer_id = int(input("Enter customer ID: "))
                 product_id = int(input("Enter product ID to add to cart: "))
